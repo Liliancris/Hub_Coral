@@ -17,11 +17,13 @@ params_dict = dict(st.query_params)
 musica_no_link = params_dict.get("musica", None)
 is_admin = params_dict.get("admin", "false").lower() == "true"
 
-# --- TÍTULO DO APLICATIVO EM TEXTO PURO ---
-st.subheader("🎼 Pasta Digital do Coral")
+# --- TÍTULO DO APLICATIVO EM FORMATO DE SUBTÍTULO E CENTRALIZADO ---
+st.markdown(
+    "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>🎼 Pasta Digital do Coral</h3>", 
+    unsafe_allow_html=True
+)
 
 # 4. PROCESSAMENTO DE SELEÇÃO DE MÚSICA COM INSTRUÇÃO INICIAL
-# Criamos a lista de opções adicionando o texto fixo na primeira linha
 TEXTO_INICIAL = "✨ Escolha a música..."
 lista_titulos_selectbox = [TEXTO_INICIAL]
 
@@ -41,27 +43,26 @@ if musica_no_link and songs:
             break
 
 # Define qual linha começará selecionada
-indice_inicial = 0  # Padrão é a linha 0 ("✨ Escolha a música...")
+indice_inicial = 0  
 if song_inicial and song_inicial["title"] in lista_titulos_selectbox:
     indice_inicial = lista_titulos_selectbox.index(song_inicial["title"])
 
 # 5. RENDERIZAÇÃO DA TELA DO IDOSO (Otimizada para Celular)
 if songs:
-    # st.write("Selecione a música abaixo para acompanhar a letra:")
+    st.write("Selecione a música abaixo para acompanhar a letra:")
     
     opcao_selecionada = st.selectbox(
-        "", 
+        "👉 TOQUE AQUI PARA MUDAR A MÚSICA:", 
         options=lista_titulos_selectbox,
         index=indice_inicial
     )
     
-    # Se o usuário escolheu uma música real (ou seja, diferente da instrução inicial)
     if opcao_selecionada != TEXTO_INICIAL:
         song = next((s for s in songs if s["title"] == opcao_selecionada), songs[0])
         
         st.markdown("---")
         st.header(f"🎤 {song['title']}")
-        # st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
+        st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
         
         if song.get("drive_folder_link"):
             st.link_button(
@@ -77,7 +78,6 @@ if songs:
         st.subheader("📝 Letra da Música")
         st.code(song["lyrics"], language="text", wrap_lines=True)
     else:
-        # Mensagem amigável enquanto nenhuma música foi tocada
         st.info("🎵 Aguardando sua seleção! Toque na caixa cinza acima para abrir a lista de músicas do ensaio.")
 
 else:
