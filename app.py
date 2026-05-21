@@ -8,6 +8,33 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- CÓDIGO PARA ESCONDER OS BOTÕES DO STREAMLIT E GITHUB ---
+st.markdown("""
+    <style>
+    /* Esconde o botão de Deploy e o menu do GitHub no topo direito */
+    .stAppDeployButton {
+        display: none !important;
+    }
+    #MainMenu {
+        visibility: hidden !important;
+    }
+    /* Esconde o menu de opções padrão do Streamlit */
+    header {
+        visibility: hidden !important;
+    }
+    /* Esconde o rodapé 'Made with Streamlit' */
+    footer {
+        visibility: hidden !important;
+    }
+    /* Ajusta o espaçamento do topo que ficou vazio */
+    .stAppHeader {
+        display: none !important;
+    }
+    </style>
+    """, 
+    unsafe_allow_html=True
+)
+
 # 2. INICIALIZAÇÃO DA INSTÂNCIA DO BANCO
 db = RepertoireDB()
 songs = db.load_songs()
@@ -49,8 +76,6 @@ if song_inicial and song_inicial["title"] in lista_titulos_selectbox:
 
 # 5. RENDERIZAÇÃO DA TELA DO IDOSO (Otimizada para Celular)
 if songs:
-    # st.write("Selecione a música abaixo para acompanhar a letra:")
-    
     opcao_selecionada = st.selectbox(
         "", 
         options=lista_titulos_selectbox,
@@ -62,7 +87,7 @@ if songs:
         
         st.markdown("---")
         st.subheader(f"🎤 {song['title']}")
-        st.write(f"**Compositor/Arranjo:** {song['composer']} | **Em revisão")
+        st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
         
         if song.get("drive_folder_link"):
             st.link_button(
