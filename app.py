@@ -17,32 +17,22 @@ params_dict = dict(st.query_params)
 musica_no_link = params_dict.get("musica", None)
 is_admin = params_dict.get("admin", "false").lower() == "true"
 
-# --- LOGOTIPO DO CORAL ASES CONVERTIDO EM VETOR TEXTUAL SEGURO ---
-# Esta string reconstrói o passarinho e a marca do Coral Ases diretamente na tela do celular
-LOGO_BASE64 = (
-    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 200' width='100%'>"
-    "<rect width='320' height='200' rx='15' fill='%23111111'/>"
-    "<text x='35' y='80' font-family='Arial, sans-serif' font-weight='900' font-size='22' fill='%23ffffff' letter-spacing='3'>Coral</text>"
-    "<text x='25' y='145' font-family='Impact, Arial Black, sans-serif' font-weight='900' font-size='72' fill='%23ffffff' letter-spacing='1'>ases</text>"
-    "<text x='37' y='175' font-family='Arial, sans-serif' font-size='13' fill='%23ffffff' letter-spacing='1'>Minas Gerais</text>"
-    "<path d='M225,125 C225,100 245,60 260,45 C263,42 268,43 268,47 C264,55 260,70 265,75 C275,65 285,67 282,75 C272,100 245,135 225,125 Z' fill='%23ffffff'/>"
-    "<path d='M250,55 C250,55 258,35 272,35 C273,35 274,37 273,38 C267,42 262,52 262,52 Z' fill='%23ffffff'/>"
-    "<circle cx='255' cy='62' r='2.5' fill='%23111111'/>"
-    "<path d='M225,125 C210,135 200,165 235,160 C255,158 260,135 250,115' stroke='%23fee180' stroke-width='6' fill='none' stroke-linecap='round'/>"
-    "<circle cx='208' cy='152' r='14' fill='%23fee180'/>"
-    "<path d='M250,115 C240,110 230,130 252,145' stroke='%23fee180' stroke-width='5' fill='none' stroke-linecap='round'/>"
-    "<circle cx='244' cy='144' r='11' fill='%23fee180'/>"
-    "</svg>"
-)
+# --- TÍTULO DO APLICATIVO EM TEXTO PURO ---
+st.title("Pasta Digital - Coral Ases")
 
-# Renderização do cabeçalho unificado com o Logo reconstruído
-st.image(LOGO_BASE64, width=220)
-st.markdown("## Pasta Digital")
+# 4. PROCESSAMENTO DE SELEÇÃO DE MÚSICA COM INSTRUÇÃO INICIAL
+# Criamos a lista de opções adicionando o texto fixo na primeira linha
+TEXTO_INICIAL = "✨ Escolha a música..."
+lista_titulos_selectbox = [TEXTO_INICIAL]
 
-# 4. PROCESSAMENTO DE SELEÇÃO DE MÚSICA
+if songs:
+    lista_titulos_real = [s["title"] for s in songs]
+    lista_titulos_selectbox.extend(lista_titulos_real)
+else:
+    lista_titulos_real = []
+
+# Lógica para detectar se veio alguma música específica pelo link da URL
 song_inicial = None
-lista_titulos = [s["title"] for s in songs] if songs else []
-
 if musica_no_link and songs:
     busca_slug = musica_no_link.replace("-", " ").lower()
     for s in songs:
@@ -50,39 +40,45 @@ if musica_no_link and songs:
             song_inicial = s
             break
 
-indice_inicial = 0
-if song_inicial and song_inicial["title"] in lista_titulos:
-    indice_inicial = lista_titulos.index(song_inicial["title"])
+# Define qual linha começará selecionada
+indice_inicial = 0  # Padrão é a linha 0 ("✨ Escolha a música...")
+if song_inicial and song_inicial["title"] in lista_titulos_selectbox:
+    indice_inicial = lista_titulos_selectbox.index(song_inicial["title"])
 
 # 5. RENDERIZAÇÃO DA TELA DO IDOSO (Otimizada para Celular)
 if songs:
-    st.write("Selecione a música abaixo para acompanhar a letra:")
+    # st.write("Selecione a música abaixo para acompanhar a letra:")
     
     opcao_selecionada = st.selectbox(
-        "👉 TOQUE AQUI PARA MUDAR A MÚSICA:", 
-        options=lista_titulos,
+        "", 
+        options=lista_titulos_selectbox,
         index=indice_inicial
     )
     
-    song = next((s for s in songs if s["title"] == opcao_selecionada), songs[0])
-    
-    st.markdown("---")
-    st.header(f"🎤 {song['title']}")
-    st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
-    
-    if song.get("drive_folder_link"):
-        st.link_button(
-            "📂 ABRIR PARTITURA OU OUVIR ÁUDIO", 
-            song["drive_folder_link"], 
-            use_container_width=True, 
-            type="primary"
-        )
+    # Se o usuário escolheu uma música real (ou seja, diferente da instrução inicial)
+    if opcao_selecionada != TEXTO_INICIAL:
+        song = next((s for s in songs if s["title"] == opcao_selecionada), songs[0])
+        
+        st.markdown("---")
+        st.header(f"🎤 {song['title']}")
+        # st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
+        
+        if song.get("drive_folder_link"):
+            st.link_button(
+                "📂 ABRIR PARTITURA OU OUVIR ÁUDIO", 
+                song["drive_folder_link"], 
+                use_container_width=True, 
+                type="primary"
+            )
+        else:
+            st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
+                
+        st.markdown("---")
+        st.subheader("📝 Letra da Música")
+        st.code(song["lyrics"], language="text", wrap_lines=True)
     else:
-        st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
-            
-    st.markdown("---")
-    st.subheader("📝 Letra da Música")
-    st.code(song["lyrics"], language="text", wrap_lines=True)
+        # Mensagem amigável enquanto nenhuma música foi tocada
+        st.info("🎵 Aguardando sua seleção! Toque na caixa cinza acima para abrir a lista de músicas do ensaio.")
 
 else:
     st.warning("👋 Olá! Nenhuma música foi cadastrada no acervo ainda.")
@@ -123,7 +119,7 @@ if is_admin:
         if not songs:
             st.caption("Nenhuma música para alterar.")
         else:
-            musica_para_alterar = st.selectbox("Escolha a música que deseja modificar:", options=lista_titulos, key="sel_alterar")
+            musica_para_alterar = st.selectbox("Escolha a música que deseja modificar:", options=lista_titulos_real, key="sel_alterar")
             song_edit = next(s for s in songs if s["title"] == musica_para_alterar)
             
             with st.form("form_alterar"):
@@ -154,7 +150,7 @@ if is_admin:
         if not songs:
             st.caption("Nenhuma música para excluir.")
         else:
-            musica_para_excluir = st.selectbox("Escolha a música que deseja remover:", options=lista_titulos, key="sel_excluir")
+            musica_para_excluir = st.selectbox("Escolha a música que deseja remover:", options=lista_titulos_real, key="sel_excluir")
             st.warning(f"Atenção: Tem certeza que deseja apagar '{musica_para_excluir}'?")
             if st.button("🔴 CONFIRMAR EXCLUSÃO", use_container_width=True):
                 db.delete_song(musica_para_excluir)
