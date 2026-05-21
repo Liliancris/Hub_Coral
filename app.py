@@ -86,7 +86,7 @@ if songs:
         song = next((s for s in songs if s["title"] == opcao_selecionada), songs[0])
         
         st.markdown("---")
-        st.subheader(f"🎤 {song['title']}")
+        st.subheader(f" {song['title']}")
         st.write(f"**Compositor/Arranjo:** {song['composer']} | **Partituras em revisão**")
         
         if song.get("drive_folder_link"):
@@ -100,7 +100,7 @@ if songs:
             st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
                 
         st.markdown("---")
-        st.subheader("📝 Letra da Música")
+        st.subheader("🐦‍🎵 Letra da Música")
         st.code(song["lyrics"], language="text", wrap_lines=True)
     else:
         st.info("🎵 Aguardando sua seleção! Toque na caixa cinza acima para abrir a lista de músicas do ensaio.")
