@@ -62,7 +62,7 @@ if songs:
         
         st.markdown("---")
         st.subheader(f"🎤 {song['title']}")
-        st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
+        st.write(f"**Compositor/Arranjo:** {song['composer']} | **Em revisão")
         
         if song.get("drive_folder_link"):
             st.link_button(
