@@ -61,7 +61,7 @@ if songs:
         song = next((s for s in songs if s["title"] == opcao_selecionada), songs[0])
         
         st.markdown("---")
-        st.header(f"🎤 {song['title']}")
+        st.subheader(f"🎤 {song['title']}")
         st.write(f"**Compositor/Arranjo:** {song['composer']} | **Naipe recomendado:** {song['voice_type']}")
         
         if song.get("drive_folder_link"):
