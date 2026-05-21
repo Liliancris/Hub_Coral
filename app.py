@@ -19,7 +19,7 @@ is_admin = params_dict.get("admin", "false").lower() == "true"
 
 # --- TÍTULO DO APLICATIVO EM FORMATO DE SUBTÍTULO E CENTRALIZADO ---
 st.markdown(
-    "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Pasta Digital do Coral</h3>", 
+    "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Pasta Digital - Coral Ases</h3>", 
     unsafe_allow_html=True
 )
 
