@@ -19,7 +19,7 @@ is_admin = params_dict.get("admin", "false").lower() == "true"
 
 # --- TÍTULO DO APLICATIVO EM FORMATO DE SUBTÍTULO E CENTRALIZADO ---
 st.markdown(
-    "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>🎼 Pasta Digital do Coral</h3>", 
+    "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Pasta Digital do Coral</h3>", 
     unsafe_allow_html=True
 )
 
@@ -49,10 +49,10 @@ if song_inicial and song_inicial["title"] in lista_titulos_selectbox:
 
 # 5. RENDERIZAÇÃO DA TELA DO IDOSO (Otimizada para Celular)
 if songs:
-    st.write("Selecione a música abaixo para acompanhar a letra:")
+    # st.write("Selecione a música abaixo para acompanhar a letra:")
     
     opcao_selecionada = st.selectbox(
-        "👉 TOQUE AQUI PARA MUDAR A MÚSICA:", 
+        "", 
         options=lista_titulos_selectbox,
         index=indice_inicial
     )
