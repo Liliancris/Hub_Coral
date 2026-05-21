@@ -18,7 +18,7 @@ musica_no_link = params_dict.get("musica", None)
 is_admin = params_dict.get("admin", "false").lower() == "true"
 
 # --- TÍTULO DO APLICATIVO EM TEXTO PURO ---
-st.title("Pasta Digital - Coral Ases")
+st.subheader("🎼 Pasta Digital do Coral")
 
 # 4. PROCESSAMENTO DE SELEÇÃO DE MÚSICA COM INSTRUÇÃO INICIAL
 # Criamos a lista de opções adicionando o texto fixo na primeira linha
