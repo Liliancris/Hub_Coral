@@ -26,12 +26,13 @@ query_params = st.query_params
 musica_no_link = query_params.get("musica", [None])[0]
 query_is_admin = query_params.get("admin", ["false"])[0].lower() == "true"
 
-if "is_admin" not in st.session_state:
-    st.session_state["is_admin"] = query_is_admin
-
-is_admin = st.session_state["is_admin"]
+# Admin mode is enabled only via URL query string
+is_admin = query_is_admin
 
 render_main_header()
+
+if is_admin:
+    st.success("Modo admin ativo — CRUD de músicas liberado abaixo.")
 
 # determine partituras link from session selection (may be placeholder)
 if songs and st.session_state.get("selected_title") and st.session_state["selected_title"] != "✨ Ou veja o repertório do ensaio":
@@ -42,7 +43,10 @@ else:
     partituras_link = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7"
 
 # Render top action buttons first (selectbox comes after)
-notes_button_clicked = render_top_action_buttons(partituras_url=partituras_link)
+render_top_action_buttons(
+    partituras_url=partituras_link,
+    maestro_url="https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du"
+)
 
 song_titles = [s["title"] for s in songs]
 lista_titulos_selectbox = build_title_list(songs)
@@ -71,8 +75,6 @@ if songs:
         song = None
         st.info("🎵 Aguardando sua seleção! Toque na caixa cinza acima para abrir a lista de músicas do ensaio.")
     
-    if notes_button_clicked:
-        render_maestro_notes_modal(songs)
 else:
     render_empty_state(is_admin)
 

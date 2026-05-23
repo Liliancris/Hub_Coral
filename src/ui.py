@@ -58,7 +58,7 @@ PAGE_CSS = """
 
 def set_page_config_and_styles() -> None:
     st.set_page_config(
-        page_title="Coral Ases, vamos treinar?",
+        page_title="Coral Ases - Preparação para o Ensaio",
         page_icon="🎵",
         layout="centered"
     )
@@ -66,7 +66,7 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Ou veja o repertório do ensaio"]
+    titles = ["✨ Clique para estudar as músicas do próximo ensaio"]
     titles.extend(s["title"] for s in songs)
     return titles
 
@@ -83,7 +83,7 @@ def find_song_by_slug(songs: List[Dict[str, Any]], musica_no_link: Optional[str]
 
 def render_main_header() -> None:
     st.markdown(
-        "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Coral Ases, vamos treinar?</h3>",
+        "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Coral Ases - Pasta Digital Ensaio</h3>",
         unsafe_allow_html=True
     )
 
@@ -99,7 +99,7 @@ def render_top_action_buttons(
     lyrics_url: str = "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
     partituras_url: str = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7",
     maestro_url: str = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du",
-) -> bool:
+) -> None:
     """Renderiza três botões arredondados (outline): Letras, Partituras e Anotações do maestro."""
     cols = st.columns([1,1,1])
     with cols[0]:
@@ -107,11 +107,11 @@ def render_top_action_buttons(
     with cols[1]:
         st.markdown(f"<div style='text-align:center'><a href=\"{partituras_url}\" target=\"_blank\" class=\"outline-btn\">Partituras</a></div>", unsafe_allow_html=True)
     with cols[2]:
-        st.markdown(f"<div style='text-align:center'><a href=\"{maestro_url}\" target=\"_blank\" class=\"outline-btn\">Ouça o Maestro</a></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align:center'><a href=\"{maestro_url}\" target=\"_blank\" class=\"outline-btn\">Fala Maestro</a></div>", unsafe_allow_html=True)
 
 
 def render_maestro_notes_modal(songs: List[Dict[str, Any]]) -> None:
-    with st.modal("Anotações do maestro"):
+    with st.expander("📝 Anotações do maestro", expanded=True):
         st.write("Anotações do maestro de todo o repertório do ensaio.")
         if not songs:
             st.info("Nenhuma música cadastrada ainda.")
