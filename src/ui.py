@@ -111,7 +111,7 @@ def render_main_header() -> None:
         """
         <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
             <h2 style="margin: 0px; font-weight: 700; color: var(--text-color);">
-                🐦 Coral Ases
+                Coral Ases
             </h2>
             <p style="margin: 0px; font-size: 15px; color: var(--secondary-text-color); font-style: italic;">
                 Preparação para o ensaio
