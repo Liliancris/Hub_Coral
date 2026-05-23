@@ -69,12 +69,12 @@ def render_song_details(song: Dict[str, Any]) -> None:
     st.subheader(f" {song['title']}")
     # st.write(f"**Compositor/Arranjo:** {song['composer']} | **Partituras em revisão**")
 
-    if song.get("document_link"):
-        st.link_button(
-            "📄 ACESSAR DOCUMENTO",
-            song["document_link"],
-            use_container_width=True
-        )
+    #if song.get("document_link"):
+    #    st.link_button(
+    #        "📄 ACESSAR DOCUMENTO",
+    #        song["document_link"],
+    #        use_container_width=True
+    #    )
 
     if song.get("drive_folder_link"):
         st.link_button(
