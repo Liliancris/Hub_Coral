@@ -58,7 +58,7 @@ PAGE_CSS = """
 
 def set_page_config_and_styles() -> None:
     st.set_page_config(
-        page_title="Coral Ases - Preparação para o Ensaio",
+        page_title="🐦 Coral Ases - Preparação para o Ensaio",
         page_icon="🎵",
         layout="centered"
     )
@@ -81,9 +81,43 @@ def find_song_by_slug(songs: List[Dict[str, Any]], musica_no_link: Optional[str]
     return next((s for s in songs if s["title"].lower() == busca_slug), None)
 
 
+import streamlit as st
+from typing import Any, Dict, List, Optional
+from PIL import Image  # <-- Adicione esta importação no topo do arquivo ui.py
+
+# ... (Mantenha o PAGE_CSS e as outras funções acima) ...
+
 def render_main_header() -> None:
+    """Carrega o logotipo da medalha e exibe o cabeçalho centralizado."""
+    try:
+        # Tenta carregar a imagem da pasta assets/
+        # Certifique-se de que o caminho 'assets/logo_coral.png' está correto
+        image = Image.open("data/logo_coral.png")
+        
+        # Centraliza a imagem no topo
+        # columns([1,2,1]) cria três colunas, a do meio é o dobro do tamanho das laterais
+        col_left, col_logo, col_right = st.columns([1, 2, 1])
+        
+        with col_logo:
+            # Mostra a imagem com a largura máxima da coluna (use_container_width=True)
+            st.image(image, use_container_width=True)
+            
+    except FileNotFoundError:
+        # Se a imagem não for encontrada, mostra apenas o texto (para não travar o app)
+        pass
+
+    # Exibe o título e o subtítulo centralizados logo abaixo do logo
     st.markdown(
-        "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Coral Ases - Pasta Digital Ensaio</h3>",
+        """
+        <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+            <h2 style="margin: 0px; font-weight: 700; color: var(--text-color);">
+                🐦 Coral Ases
+            </h2>
+            <p style="margin: 0px; font-size: 15px; color: var(--secondary-text-color); font-style: italic;">
+                Preparação para o ensaio
+            </p>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
