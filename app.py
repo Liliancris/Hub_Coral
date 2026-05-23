@@ -6,6 +6,7 @@ from src.ui import (
     render_admin_panel,
     render_empty_state,
     render_main_header,
+    render_main_document_link,
     render_song_details,
     set_page_config_and_styles,
 )
@@ -20,6 +21,7 @@ musica_no_link = params_dict.get("musica", None)
 is_admin = params_dict.get("admin", "false").lower() == "true"
 
 render_main_header()
+render_main_document_link()
 
 song_titles = [s["title"] for s in songs]
 lista_titulos_selectbox = build_title_list(songs)

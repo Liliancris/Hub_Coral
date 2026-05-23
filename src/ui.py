@@ -56,10 +56,25 @@ def render_main_header() -> None:
     )
 
 
+def render_main_document_link() -> None:
+    st.link_button(
+        "📄 ACESSAR LETRAS DE TODO O REPERTÓRIO",
+        "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
+        use_container_width=True
+    )
+
+
 def render_song_details(song: Dict[str, Any]) -> None:
     st.markdown("---")
     st.subheader(f" {song['title']}")
-    st.write(f"**Compositor/Arranjo:** {song['composer']} | **Partituras em revisão**")
+    # st.write(f"**Compositor/Arranjo:** {song['composer']} | **Partituras em revisão**")
+
+    if song.get("document_link"):
+        st.link_button(
+            "📄 ACESSAR DOCUMENTO",
+            song["document_link"],
+            use_container_width=True
+        )
 
     if song.get("drive_folder_link"):
         st.link_button(
