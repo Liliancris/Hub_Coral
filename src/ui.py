@@ -141,7 +141,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
 
     if song.get("drive_folder_link"):
         st.link_button(
-            "📂 ABRIR PARTITURA OU OUVIR ÁUDIO",
+            "📂 Mostrar partituras e áudio da música",
             song["drive_folder_link"],
             use_container_width=True,
             type="primary"
