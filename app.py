@@ -22,9 +22,15 @@ if "selected_title" not in st.session_state:
     # default to the placeholder used in build_title_list
     st.session_state["selected_title"] = "✨ Ou veja o repertório do ensaio"
 
-query_params = st.query_params
-musica_no_link = query_params.get("musica", [None])[0]
-query_is_admin = query_params.get("admin", ["false"])[0].lower() == "true"
+query_params = st.query_params if hasattr(st, "query_params") else st.experimental_get_query_params()
+musica_no_link = query_params.get("musica", None)
+if isinstance(musica_no_link, list):
+    musica_no_link = musica_no_link[0] if musica_no_link else None
+
+admin_raw = query_params.get("admin", "false")
+if isinstance(admin_raw, list):
+    admin_raw = admin_raw[0] if admin_raw else "false"
+query_is_admin = str(admin_raw).strip().lower() in ("true", "1", "yes", "on")
 
 # Admin mode is enabled only via URL query string
 is_admin = query_is_admin
@@ -32,7 +38,9 @@ is_admin = query_is_admin
 render_main_header()
 
 if is_admin:
-    st.success("Modo admin ativo — CRUD de músicas liberado abaixo.")
+    st.success("Modo admin ativo — Cadastro de músicas liberado mais abaixo.")
+elif "admin" in query_params:
+    st.warning(f"Parâmetro admin detectado como '{admin_raw}'. Use '?admin=true' para liberar o CRUD.")
 
 # determine partituras link from session selection (may be placeholder)
 if songs and st.session_state.get("selected_title") and st.session_state["selected_title"] != "✨ Ou veja o repertório do ensaio":
