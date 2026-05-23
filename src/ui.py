@@ -22,13 +22,43 @@ PAGE_CSS = """
     .stAppHeader {
         display: none !important;
     }
+    /* Botões de ação arredondados (outline, sem preenchimento) */
+    .action-buttons { display:flex; gap:12px; justify-content:center; margin-bottom:12px; flex-wrap:wrap; }
+    .outline-btn {
+        border: 1px solid rgba(0,0,0,0.6);
+        border-radius: 999px;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: inherit;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        box-sizing: border-box;
+        width: 100%; /* occupy entire column width */
+        height: 40px; /* consistent height */
+        font-size: 14px;
+    }
+    .outline-btn:hover { background: rgba(0,0,0,0.03); }
+    /* Estilo para botões nativos do Streamlit (mantém aparência consistente) */
+    .stButton>button, .stButton>div>button {
+        border: 1px solid rgba(0,0,0,0.6) !important;
+        border-radius: 999px !important;
+        padding: 8px 12px !important;
+        background: transparent !important;
+        width: 100% !important; /* fill column */
+        height: 40px !important;
+        font-weight: 600 !important;
+        box-sizing: border-box !important;
+    }
     </style>
 """
 
 
 def set_page_config_and_styles() -> None:
     st.set_page_config(
-        page_title="Coral Ases - Pasta Digital",
+        page_title="Coral Ases, vamos treinar?",
         page_icon="🎵",
         layout="centered"
     )
@@ -36,9 +66,11 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Escolha a música..."]
+    titles = ["✨ Ou veja o repertório do ensaio"]
     titles.extend(s["title"] for s in songs)
     return titles
+
+
 
 
 def find_song_by_slug(songs: List[Dict[str, Any]], musica_no_link: Optional[str]) -> Optional[Dict[str, Any]]:
@@ -51,17 +83,48 @@ def find_song_by_slug(songs: List[Dict[str, Any]], musica_no_link: Optional[str]
 
 def render_main_header() -> None:
     st.markdown(
-        "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Pasta Digital - Coral Ases</h3>",
+        "<h3 style='text-align: center; margin-top: 0px; margin-bottom: 10px;'>Coral Ases, vamos treinar?</h3>",
         unsafe_allow_html=True
     )
 
 
 def render_main_document_link() -> None:
-    st.link_button(
-        "📄 ACESSAR LETRAS DE TODO O REPERTÓRIO",
-        "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
-        use_container_width=True
+    st.markdown(
+        "[📄 Letras do repertório](https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing)",
+        unsafe_allow_html=True
     )
+
+
+def render_top_action_buttons(
+    lyrics_url: str = "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
+    partituras_url: str = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7",
+    maestro_url: str = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du",
+) -> bool:
+    """Renderiza três botões arredondados (outline): Letras, Partituras e Anotações do maestro."""
+    cols = st.columns([1,1,1])
+    with cols[0]:
+        st.markdown(f"<div style='text-align:center'><a href=\"{lyrics_url}\" target=\"_blank\" class=\"outline-btn\">Letras</a></div>", unsafe_allow_html=True)
+    with cols[1]:
+        st.markdown(f"<div style='text-align:center'><a href=\"{partituras_url}\" target=\"_blank\" class=\"outline-btn\">Partituras</a></div>", unsafe_allow_html=True)
+    with cols[2]:
+        st.markdown(f"<div style='text-align:center'><a href=\"{maestro_url}\" target=\"_blank\" class=\"outline-btn\">Ouça o Maestro</a></div>", unsafe_allow_html=True)
+
+
+def render_maestro_notes_modal(songs: List[Dict[str, Any]]) -> None:
+    with st.modal("Anotações do maestro"):
+        st.write("Anotações do maestro de todo o repertório do ensaio.")
+        if not songs:
+            st.info("Nenhuma música cadastrada ainda.")
+            return
+
+        for song in songs:
+            st.markdown(f"### {song['title']}")
+            if song.get("composer"):
+                st.markdown(f"**Compositor:** {song['composer']}")
+            if song.get("voice_type"):
+                st.markdown(f"**Voz:** {song['voice_type']}")
+            st.code(song.get("lyrics", "(Sem anotações)"), language="text", wrap_lines=True)
+            st.markdown("---")
 
 
 def render_song_details(song: Dict[str, Any]) -> None:
@@ -87,7 +150,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
         st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("🐦‍🎵 Letra da Música")
+    st.subheader(" Anotações do maestro")
     st.code(song["lyrics"], language="text", wrap_lines=True)
 
 
@@ -109,7 +172,7 @@ def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List
             new_composer = st.text_input("Compositor *")
             new_voice = st.selectbox("Voz", ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"], key="cad_voice")
             new_folder = st.text_input("Link da Pasta no Google Drive")
-            new_lyrics = st.text_area("Letra da Música", key="cad_lyrics")
+            new_lyrics = st.text_area("Anotações do maestro", key="cad_lyrics")
 
             if st.form_submit_button("Salvar Nova Música"):
                 if new_title and new_composer:
@@ -140,7 +203,7 @@ def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List
                 idx_voice = vozes.index(song_edit["voice_type"]) if song_edit["voice_type"] in vozes else 0
                 edit_voice = st.selectbox("Voz", vozes, index=idx_voice, key="edit_voice")
                 edit_folder = st.text_input("Link da Pasta no Google Drive", value=song_edit.get("drive_folder_link", ""))
-                edit_lyrics = st.text_area("Letra da Música", value=song_edit["lyrics"], key="edit_lyrics")
+                edit_lyrics = st.text_area("Anotações do maestro", value=song_edit["lyrics"], key="edit_lyrics")
 
                 if st.form_submit_button("Atualizar Dados"):
                     if edit_title and edit_composer:
