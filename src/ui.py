@@ -58,7 +58,7 @@ PAGE_CSS = """
 
 def set_page_config_and_styles() -> None:
     st.set_page_config(
-        page_title="Coral Ases - Preparação para o Ensaio",
+        page_title="Coral Ases",
         page_icon="🎵",
         layout="centered"
     )
@@ -110,9 +110,7 @@ def render_main_header() -> None:
     st.markdown(
         """
         <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
-            <h2 style="margin: 0px; font-weight: 700; color: var(--text-color);">
-                Coral Ases
-            </h2>
+            <h2 style="margin: 0px; font-weight: 700; color: var(--text-color);">Coral Ases</h2>
             <p style="margin: 0px; font-size: 15px; color: var(--secondary-text-color); font-style: italic;">Preparação para o ensaio</p>
         </div>
         """,
