@@ -81,7 +81,7 @@ if songs:
         render_song_details(song)
     else:
         song = None
-        st.info("🎵 Aguardando sua seleção! Toque na caixa cinza acima para abrir a lista de músicas do ensaio.")
+        st.info("🎵 Aguardando sua seleção! Toque na caixa acima para abrir a lista de músicas do ensaio.")
     
 else:
     render_empty_state(is_admin)
