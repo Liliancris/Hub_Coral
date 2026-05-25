@@ -7,12 +7,20 @@ class RepertoireDB:
         self.file_path = file_path
         self._ensure_storage_exists()
 
+    NEXT_EVENT_FILE = "data/next_event.json"
+
     def _ensure_storage_exists(self):
         """Garante que a pasta data e o arquivo JSON existam ao iniciar."""
         os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
         if not os.path.exists(self.file_path):
             with open(self.file_path, 'w', encoding='utf-8') as f:
                 json.dump([], f, ensure_ascii=False, indent=4)
+
+    def _ensure_file_exists(self, file_path: str, default_value: Any) -> None:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        if not os.path.exists(file_path):
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(default_value, f, ensure_ascii=False, indent=4)
 
     def load_songs(self) -> List[Dict[str, Any]]:
         """Carrega todas as músicas do arquivo JSON."""
@@ -21,6 +29,22 @@ class RepertoireDB:
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             return []
+
+    def load_next_event(self) -> str:
+        """Carrega o texto do próximo evento."""
+        self._ensure_file_exists(self.NEXT_EVENT_FILE, {"text": ""})
+        try:
+            with open(self.NEXT_EVENT_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get("text", "")
+        except (json.JSONDecodeError, FileNotFoundError):
+            return ""
+
+    def save_next_event(self, text: str) -> None:
+        """Grava o texto do próximo evento."""
+        self._ensure_file_exists(self.NEXT_EVENT_FILE, {"text": ""})
+        with open(self.NEXT_EVENT_FILE, 'w', encoding='utf-8') as f:
+            json.dump({"text": text}, f, ensure_ascii=False, indent=4)
 
     def _save_all_songs(self, songs: List[Dict[str, Any]]):
         """Método interno para sobrescrever o arquivo JSON com a lista atualizada."""

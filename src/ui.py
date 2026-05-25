@@ -96,6 +96,20 @@ PAGE_CSS = """
         font-size: 17px !important; /* Letras ampliadas e confortáveis para leitura */
         font-weight: 500 !important;
     }
+    .stButton>button {
+        border-radius: 12px !important;
+        height: 55px !important;
+        font-size: 16px !important;
+        background-color: #2E5A44 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        padding: 8px 12px !important;
+        margin-bottom: 12px !important;
+    }
+    .stButton>button:hover {
+        background-color: #234534 !important;
+        color: #FFFFFF !important;
+    }
     </style>
 """
 
@@ -151,12 +165,17 @@ def render_main_document_link() -> None:
     )
 
 
-def render_top_action_buttons(
+def render_next_event_button() -> bool:
+    """Renderiza o botão do próximo evento logo após o cabeçalho."""
+    return st.button("Próximo evento", use_container_width=True, key="btn_next_event")
+
+
+def render_main_action_buttons(
     lyrics_url: str = "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
     partituras_url: str = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7",
     maestro_url: str = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du",
 ) -> None:
-    """Renderiza três botões preenchidos, fáceis de clicar para o público sênior."""
+    """Renderiza os três botões principais após a seleção de música."""
     cols = st.columns([1,1,1])
     with cols[0]:
         st.markdown(f"<div style='text-align:center'><a href=\"{lyrics_url}\" target=\"_blank\" class=\"outline-btn\">Letras</a></div>", unsafe_allow_html=True)
@@ -193,6 +212,12 @@ def render_song_details(song: Dict[str, Any]) -> None:
             unsafe_allow_html=True
         )
 
+    st.markdown("---")
+    st.subheader("✒️ Anotações do maestro")
+    
+    # O bloco st.code renderizará o card em tom pêssego/creme com letras legíveis automatizado pelo CSS injetado
+    st.code(song["lyrics"], language="text", wrap_lines=True)
+
     if song.get("drive_folder_link"):
         st.markdown(
             f'<a href="{song["drive_folder_link"]}" target="_blank" class="outline-btn">📂 Mostrar partituras e áudio da música</a>',
@@ -200,12 +225,6 @@ def render_song_details(song: Dict[str, Any]) -> None:
         )
     else:
         st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
-
-    st.markdown("---")
-    st.subheader("✒️ Anotações do maestro")
-    
-    # O bloco st.code renderizará o card em tom pêssego/creme com letras legíveis automatizado pelo CSS injetado
-    st.code(song["lyrics"], language="text", wrap_lines=True)
 
 
 def render_empty_state(is_admin: bool) -> None:
@@ -223,11 +242,27 @@ def render_empty_state(is_admin: bool) -> None:
         st.write("Se você é o regente/administrador, adicione `?admin=true` ao final do link para cadastrar.")
 
 
+def render_next_event_area(next_event_text: str, is_admin: bool, db: Any) -> None:
+    with st.expander("📌 Próximo evento", expanded=True):
+        if is_admin:
+            with st.form("form_next_event", clear_on_submit=False):
+                edited_text = st.text_area("Texto do próximo evento", value=next_event_text, height=200)
+                if st.form_submit_button("Gravar próximo evento"):
+                    db.save_next_event(edited_text or "")
+                    st.success("Texto do próximo evento gravado com sucesso.")
+                    st.experimental_rerun()
+        else:
+            if next_event_text:
+                st.markdown(next_event_text)
+            else:
+                st.info("Nenhum texto cadastrado para o próximo evento. Peça ao administrador para gravar o texto.")
+
+
 def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List[str]) -> None:
     st.markdown("---")
     st.subheader("🛠️ Painel do Regente / Administrador")
 
-    tab_cadastrar, tab_alterar, tab_excluir = st.tabs(["➕ Cadastrar", "📝 Alterar", "❌ Excluir"])
+    tab_cadastrar, tab_alterar, tab_excluir, tab_proximos = st.tabs(["➕ Cadastrar", "📝 Alterar", "❌ Excluir", "📌 Próximos eventos"])
 
     with tab_cadastrar:
         with st.form("form_cadastro", clear_on_submit=True):
@@ -292,4 +327,13 @@ def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List
             if st.button("🔴 CONFIRMAR EXCLUSÃO", use_container_width=True):
                 db.delete_song(musica_para_excluir)
                 st.success("Removida!")
+                st.rerun()
+
+    with tab_proximos:
+        current_next_event = db.load_next_event()
+        with st.form("form_proximos_eventos", clear_on_submit=False):
+            prox_text = st.text_area("Quadro de próximos eventos", value=current_next_event, height=200)
+            if st.form_submit_button("Atualizar quadro de próximos eventos"):
+                db.save_next_event(prox_text or "")
+                st.success("Quadro de próximos eventos atualizado com sucesso.")
                 st.rerun()
