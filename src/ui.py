@@ -2,6 +2,16 @@ import streamlit as st
 from typing import Any, Dict, List, Optional
 from PIL import Image
 
+TITLE_PLACEHOLDER = "✨ Repertório Atual - Selecione uma música"
+BUTTON_LINK_TEMPLATE = "<div style='text-align:center'><a href=\"{url}\" target=\"_blank\" class=\"outline-btn\">{label}</a></div>"
+SELECT_SONG_HELP_MESSAGE = (
+    "🎵 Toque na caixa acima para ver partitura e audios da música selecionada. "
+    "Ou acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro."
+)
+VOICE_OPTIONS = ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"]
+DEFAULT_PARTITURAS_LINK = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7"
+DEFAULT_MAESTRO_LINK = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du"
+
 PAGE_CSS = """
     <style>
     /* Configuração global do fundo do app para o tom creme acolhedor */
@@ -53,7 +63,7 @@ PAGE_CSS = """
         padding: 8px 12px !important;
         text-decoration: none !important;
         color: #FFFFFF !important;
-        background-color: #2E5A44 !important;
+        background-color: #8F9779 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -68,7 +78,7 @@ PAGE_CSS = """
         margin-bottom: 12px !important; 
     }
     .outline-btn:hover { 
-        background-color: #234534 !important; 
+        background-color: #7F8565 !important; 
         color: #FFFFFF !important; 
         text-decoration: none !important; 
     }
@@ -96,18 +106,21 @@ PAGE_CSS = """
         font-size: 17px !important; /* Letras ampliadas e confortáveis para leitura */
         font-weight: 500 !important;
     }
-    .stButton>button {
+    .stButton>button,
+    .stButton>div>button {
         border-radius: 12px !important;
         height: 55px !important;
         font-size: 16px !important;
-        background-color: #2E5A44 !important;
+        font-weight: 600 !important;
+        background-color: #8F9779 !important;
         color: #FFFFFF !important;
         border: none !important;
         padding: 8px 12px !important;
         margin-bottom: 12px !important;
     }
-    .stButton>button:hover {
-        background-color: #234534 !important;
+    .stButton>button:hover,
+    .stButton>div>button:hover {
+        background-color: #7F8565 !important;
         color: #FFFFFF !important;
     }
     </style>
@@ -123,7 +136,7 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Músicas para o próximo ensaio"]
+    titles = [TITLE_PLACEHOLDER]
     titles.extend(s["title"] for s in songs)
     return titles
 
@@ -161,18 +174,15 @@ def render_main_subtitle() -> None:
     st.markdown(
         """
         <div style="text-align: center; margin-bottom: 25px;">
-            <p style="margin: 5px 0px 0px 0px; font-size: 16px; color: #2D2D2D; opacity: 0.8; font-style: italic;">Preparação para o ensaio</p>
+            <p style="margin: 5px 0px 0px 0px; font-size: 20px; color: #2D2D2D; opacity: 0.8; ">Preparação para o ensaio</p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
 
-def render_main_document_link() -> None:
-    st.markdown(
-        "[📄 Letras do repertório](https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing)",
-        unsafe_allow_html=True
-    )
+def render_link_button(url: str, label: str) -> None:
+    st.markdown(BUTTON_LINK_TEMPLATE.format(url=url, label=label), unsafe_allow_html=True)
 
 
 def render_next_event_button() -> bool:
@@ -182,39 +192,22 @@ def render_next_event_button() -> bool:
 
 def render_main_action_buttons(
     lyrics_url: str = "https://docs.google.com/document/d/1zBgtUXYp7m-QBz2EejqSb7hvqUB6DmVrCJn2iIFsEqE/edit?usp=sharing",
-    partituras_url: str = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7",
-    maestro_url: str = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du",
+    partituras_url: str = DEFAULT_PARTITURAS_LINK,
+    maestro_url: str = DEFAULT_MAESTRO_LINK,
 ) -> None:
     """Renderiza os três botões principais após a seleção de música."""
-    cols = st.columns([1,1,1])
+    cols = st.columns([1, 1, 1])
     with cols[0]:
-        st.markdown(f"<div style='text-align:center'><a href=\"{lyrics_url}\" target=\"_blank\" class=\"outline-btn\">Letras</a></div>", unsafe_allow_html=True)
+        render_link_button(lyrics_url, "Letras")
     with cols[1]:
-        st.markdown(f"<div style='text-align:center'><a href=\"{partituras_url}\" target=\"_blank\" class=\"outline-btn\">Partituras</a></div>", unsafe_allow_html=True)
+        render_link_button(partituras_url, "Partituras")
     with cols[2]:
-        st.markdown(f"<div style='text-align:center'><a href=\"{maestro_url}\" target=\"_blank\" class=\"outline-btn\">Fala Maestro</a></div>", unsafe_allow_html=True)
-
-
-def render_maestro_notes_modal(songs: List[Dict[str, Any]]) -> None:
-    with st.expander("✒️ Anotações do maestro", expanded=True):
-        st.write("Anotações do maestro de todo o repertório do ensaio.")
-        if not songs:
-            st.info("Nenhuma música cadastrada ainda.")
-            return
-
-        for song in songs:
-            st.markdown(f"### {song['title']}")
-            if song.get("composer"):
-                st.markdown(f"**Compositor:** {song['composer']}")
-            if song.get("voice_type"):
-                st.markdown(f"**Voz:** {song['voice_type']}")
-            st.code(song.get("lyrics", "(Sem anotações)"), language="text", wrap_lines=True)
-            st.markdown("---")
+        render_link_button(maestro_url, "Fala Maestro")
 
 
 def render_song_details(song: Dict[str, Any]) -> None:
-    st.markdown("---")
-    st.subheader(f"🎶 {song['title']}")
+    
+    st.subheader(f"{song['title']}")
 
     if song.get("document_link"):
         st.markdown(
@@ -222,8 +215,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
             unsafe_allow_html=True
         )
 
-    st.markdown("---")
-    st.subheader("✒️ Anotações do maestro")
+    st.markdown("#### 🎶 Anotações do maestro")
     
     # O bloco st.code renderizará o card em tom pêssego/creme com letras legíveis automatizado pelo CSS injetado
     st.code(song["lyrics"], language="text", wrap_lines=True)
@@ -243,29 +235,116 @@ def render_empty_state(is_admin: bool) -> None:
         """
         <div style="background-color: #F7ECE1; padding: 20px; border-radius: 12px; border: 1px solid rgba(163, 112, 76, 0.2); color: #2D2D2D; margin-bottom: 15px;">
             <span style="font-size: 20px;">🎵</span> <br>
-            Toque na caixa acima para selecionar a música e ver partitura e audios disponíveis. Ou acione os botões abaixo para acessar o repertório completo e as anotações do maestro. 
+            {message}
         </div>
-        """, 
+        """.format(message=SELECT_SONG_HELP_MESSAGE), 
         unsafe_allow_html=True
     )
     if is_admin:
         st.write("Se você é o regente/administrador, adicione `?admin=true` ao final do link para cadastrar.")
 
 
+def render_editor_next_event(next_event_text: str, db: Any) -> None:
+    with st.form("form_next_event", clear_on_submit=False):
+        edited_text = st.text_area("Texto do próximo evento", value=next_event_text, height=200)
+        if st.form_submit_button("Gravar próximo evento"):
+            db.save_next_event(edited_text or "")
+            st.success("Texto do próximo evento gravado com sucesso.")
+            st.experimental_rerun()
+
+
+def render_viewer_next_event(next_event_text: str) -> None:
+    if next_event_text:
+        st.markdown(next_event_text)
+    else:
+        st.info("Nenhum texto cadastrado para o próximo evento. Peça ao administrador para gravar o texto.")
+
+
 def render_next_event_area(next_event_text: str, is_admin: bool, db: Any) -> None:
     with st.expander("📌 Próximo evento", expanded=True):
         if is_admin:
-            with st.form("form_next_event", clear_on_submit=False):
-                edited_text = st.text_area("Texto do próximo evento", value=next_event_text, height=200)
-                if st.form_submit_button("Gravar próximo evento"):
-                    db.save_next_event(edited_text or "")
-                    st.success("Texto do próximo evento gravado com sucesso.")
-                    st.experimental_rerun()
+            render_editor_next_event(next_event_text, db)
         else:
-            if next_event_text:
-                st.markdown(next_event_text)
+            render_viewer_next_event(next_event_text)
+
+
+def render_admin_tab_add(db: Any) -> None:
+    with st.form("form_cadastro", clear_on_submit=True):
+        new_title = st.text_input("Título da Música *")
+        new_composer = st.text_input("Compositor *")
+        new_voice = st.selectbox("Voz", VOICE_OPTIONS, key="cad_voice")
+        new_folder = st.text_input("Link da Pasta no Google Drive")
+        new_lyrics = st.text_area("🎶 Anotações do maestro", key="cad_lyrics")
+
+        if st.form_submit_button("Salvar Nova Música"):
+            if new_title and new_composer:
+                payload = {
+                    "title": new_title.strip(),
+                    "composer": new_composer.strip(),
+                    "voice_type": new_voice,
+                    "lyrics": new_lyrics,
+                    "drive_folder_link": new_folder.strip()
+                }
+                db.save_song(payload)
+                st.success("Música cadastrada!")
+                st.rerun()
             else:
-                st.info("Nenhum texto cadastrado para o próximo evento. Peça ao administrador para gravar o texto.")
+                st.error("Preencha os campos obrigatórios.")
+
+
+def render_admin_tab_edit(db: Any, songs: List[Dict[str, Any]], title_options: List[str]) -> None:
+    if not songs:
+        st.caption("Nenhuma música para alterar.")
+        return
+
+    musica_para_alterar = st.selectbox("Escolha a música que deseja modificar:", options=title_options, key="sel_alterar")
+    song_edit = next(s for s in songs if s["title"] == musica_para_alterar)
+
+    with st.form("form_alterar"):
+        edit_title = st.text_input("Título da Música *", value=song_edit["title"])
+        edit_composer = st.text_input("Compositor *", value=song_edit["composer"])
+        idx_voice = VOICE_OPTIONS.index(song_edit["voice_type"]) if song_edit["voice_type"] in VOICE_OPTIONS else 0
+        edit_voice = st.selectbox("Voz", VOICE_OPTIONS, index=idx_voice, key="edit_voice")
+        edit_folder = st.text_input("Link da Pasta no Google Drive", value=song_edit.get("drive_folder_link", ""))
+        edit_lyrics = st.text_area("Anotações do maestro", value=song_edit["lyrics"], key="edit_lyrics")
+
+        if st.form_submit_button("Atualizar Dados"):
+            if edit_title and edit_composer:
+                updated_payload = {
+                    "title": edit_title.strip(),
+                    "composer": edit_composer.strip(),
+                    "voice_type": edit_voice,
+                    "lyrics": edit_lyrics,
+                    "drive_folder_link": edit_folder.strip()
+                }
+                db.update_song(song_edit["title"], updated_payload)
+                st.success("Música atualizada com sucesso!")
+                st.rerun()
+            else:
+                st.error("Título e Compositor não podem ficar vazios.")
+
+
+def render_admin_tab_delete(db: Any, songs: List[Dict[str, Any]], title_options: List[str]) -> None:
+    if not songs:
+        st.caption("Nenhuma música para excluir.")
+        return
+
+    musica_para_excluir = st.selectbox("Escolha a música que deseja remover:", options=title_options, key="sel_excluir")
+    st.warning(f"Atenção: Tem certeza que deseja apagar '{musica_para_excluir}'?")
+    if st.button("🔴 CONFIRMAR EXCLUSÃO", use_container_width=True):
+        db.delete_song(musica_para_excluir)
+        st.success("Removida!")
+        st.rerun()
+
+
+def render_admin_tab_next_events(db: Any) -> None:
+    current_next_event = db.load_next_event()
+    with st.form("form_proximos_eventos", clear_on_submit=False):
+        prox_text = st.text_area("Quadro de próximos eventos", value=current_next_event, height=200)
+        if st.form_submit_button("Atualizar quadro de próximos eventos"):
+            db.save_next_event(prox_text or "")
+            st.success("Quadro de próximos eventos atualizado com sucesso.")
+            st.rerun()
 
 
 def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List[str]) -> None:
@@ -275,75 +354,13 @@ def render_admin_panel(db: Any, songs: List[Dict[str, Any]], title_options: List
     tab_cadastrar, tab_alterar, tab_excluir, tab_proximos = st.tabs(["➕ Cadastrar", "📝 Alterar", "❌ Excluir", "📌 Próximos eventos"])
 
     with tab_cadastrar:
-        with st.form("form_cadastro", clear_on_submit=True):
-            new_title = st.text_input("Título da Música *")
-            new_composer = st.text_input("Compositor *")
-            new_voice = st.selectbox("Voz", ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"], key="cad_voice")
-            new_folder = st.text_input("Link da Pasta no Google Drive")
-            new_lyrics = st.text_area("Anotações do maestro", key="cad_lyrics")
-
-            if st.form_submit_button("Salvar Nova Música"):
-                if new_title and new_composer:
-                    payload = {
-                        "title": new_title.strip(),
-                        "composer": new_composer.strip(),
-                        "voice_type": new_voice,
-                        "lyrics": new_lyrics,
-                        "drive_folder_link": new_folder.strip()
-                    }
-                    db.save_song(payload)
-                    st.success("Música cadastrada!")
-                    st.rerun()
-                else:
-                    st.error("Preencha os campos obrigatórios.")
+        render_admin_tab_add(db)
 
     with tab_alterar:
-        if not songs:
-            st.caption("Nenhuma música para alterar.")
-        else:
-            musica_para_alterar = st.selectbox("Escolha a música que deseja modificar:", options=title_options, key="sel_alterar")
-            song_edit = next(s for s in songs if s["title"] == musica_para_alterar)
-
-            with st.form("form_alterar"):
-                edit_title = st.text_input("Título da Música *", value=song_edit["title"])
-                edit_composer = st.text_input("Compositor *", value=song_edit["composer"])
-                vozes = ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"]
-                idx_voice = vozes.index(song_edit["voice_type"]) if song_edit["voice_type"] in vozes else 0
-                edit_voice = st.selectbox("Voz", vozes, index=idx_voice, key="edit_voice")
-                edit_folder = st.text_input("Link da Pasta no Google Drive", value=song_edit.get("drive_folder_link", ""))
-                edit_lyrics = st.text_area("Anotações do maestro", value=song_edit["lyrics"], key="edit_lyrics")
-
-                if st.form_submit_button("Atualizar Dados"):
-                    if edit_title and edit_composer:
-                        updated_payload = {
-                            "title": edit_title.strip(),
-                            "composer": edit_composer.strip(),
-                            "voice_type": edit_voice,
-                            "lyrics": edit_lyrics,
-                            "drive_folder_link": edit_folder.strip()
-                        }
-                        db.update_song(song_edit["title"], updated_payload)
-                        st.success("Música atualizada com sucesso!")
-                        st.rerun()
-                    else:
-                        st.error("Título e Compositor não podem ficar vazios.")
+        render_admin_tab_edit(db, songs, title_options)
 
     with tab_excluir:
-        if not songs:
-            st.caption("Nenhuma música para excluir.")
-        else:
-            musica_para_excluir = st.selectbox("Escolha a música que deseja remover:", options=title_options, key="sel_excluir")
-            st.warning(f"Atenção: Tem certeza que deseja apagar '{musica_para_excluir}'?")
-            if st.button("🔴 CONFIRMAR EXCLUSÃO", use_container_width=True):
-                db.delete_song(musica_para_excluir)
-                st.success("Removida!")
-                st.rerun()
+        render_admin_tab_delete(db, songs, title_options)
 
     with tab_proximos:
-        current_next_event = db.load_next_event()
-        with st.form("form_proximos_eventos", clear_on_submit=False):
-            prox_text = st.text_area("Quadro de próximos eventos", value=current_next_event, height=200)
-            if st.form_submit_button("Atualizar quadro de próximos eventos"):
-                db.save_next_event(prox_text or "")
-                st.success("Quadro de próximos eventos atualizado com sucesso.")
-                st.rerun()
+        render_admin_tab_next_events(db)
