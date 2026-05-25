@@ -6,6 +6,7 @@ from src.ui import (
     render_admin_panel,
     render_empty_state,
     render_main_header,
+    render_main_subtitle,
     render_maestro_notes_modal,
     render_next_event_area,
     render_main_action_buttons,
@@ -68,6 +69,8 @@ if songs:
     if show_next_event:
         st.session_state["show_next_event"] = not st.session_state["show_next_event"]
 
+    render_main_subtitle()
+
     if st.session_state["show_next_event"]:
         render_next_event_area(next_event_text, is_admin, db)
 
@@ -84,7 +87,7 @@ if songs:
         render_song_details(song)
     else:
         song = None
-        st.info("🎵 Aguardando sua seleção! Toque na caixa acima para abrir a lista de músicas do ensaio.")
+        st.info("🎵 Toque na caixa acima para ver partitura e audios da música selecionada. Ou acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro. ")
 
     render_main_action_buttons(
         partituras_url=partituras_link,

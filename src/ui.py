@@ -151,6 +151,16 @@ def render_main_header() -> None:
         """
         <div style="text-align: center; margin-top: 10px; margin-bottom: 25px;">
             <h1 style="margin: 0px; font-weight: 700; color: #2D2D2D; font-family: 'Playfair Display', Georgia, serif;">Coral Ases</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def render_main_subtitle() -> None:
+    st.markdown(
+        """
+        <div style="text-align: center; margin-bottom: 25px;">
             <p style="margin: 5px 0px 0px 0px; font-size: 16px; color: #2D2D2D; opacity: 0.8; font-style: italic;">Preparação para o ensaio</p>
         </div>
         """,
@@ -232,8 +242,8 @@ def render_empty_state(is_admin: bool) -> None:
     st.markdown(
         """
         <div style="background-color: #F7ECE1; padding: 20px; border-radius: 12px; border: 1px solid rgba(163, 112, 76, 0.2); color: #2D2D2D; margin-bottom: 15px;">
-            <span style="font-size: 20px;">🎵</span> <b>Aguardando sua seleção!</b><br>
-            Toque na caixa acima para abrir a lista de músicas do ensaio.
+            <span style="font-size: 20px;">🎵</span> <br>
+            Toque na caixa acima para selecionar a música e ver partitura e audios disponíveis. Ou acione os botões abaixo para acessar o repertório completo e as anotações do maestro. 
         </div>
         """, 
         unsafe_allow_html=True
