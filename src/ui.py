@@ -107,7 +107,7 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Clique para estudar as músicas do próximo ensaio"]
+    titles = ["✨ Clique - Músicas do próximo ensaio"]
     titles.extend(s["title"] for s in songs)
     return titles
 
