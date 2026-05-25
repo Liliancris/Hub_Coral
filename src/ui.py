@@ -4,12 +4,18 @@ from PIL import Image
 
 TITLE_PLACEHOLDER = "✨ Repertório Atual - Selecione uma música"
 BUTTON_LINK_TEMPLATE = "<div style='text-align:center'><a href=\"{url}\" target=\"_blank\" class=\"outline-btn\">{label}</a></div>"
+
+# Aplicado negrito nos termos solicitados usando Markdown (**)
 SELECT_SONG_HELP_MESSAGE = (
-    "🎵 Toque na caixa abaixo para ver partitura e audios da música selecionada bem como as anotações do Maestro. "
+    "🎵 **Toque na caixa acima** para ver partitura e audio da música selecionada bem como as anotações do Maestro."
+    "Ou **Acione os botões abaixo** para acessar o repertório completo."
+    
 )
 SELECT_REPERTOIRE_HELP_MESSAGE = (
-    "🎵 Acione os botões abaixo para acessar o repertório completo."
+     "🎵 **Toque na caixa acima** para ver partitura e audio da música selecionada, bem como as anotações do Maestro."
+    " Ou **Acione os botões abaixo** para acessar o repertório completo."
 )
+
 VOICE_OPTIONS = ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"]
 DEFAULT_PARTITURAS_LINK = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7"
 DEFAULT_MAESTRO_LINK = "https://drive.google.com/drive/u/1/folders/1RmUwx8afSD3K5egvbnBbpUKSwxKfN6du"
@@ -189,7 +195,6 @@ def render_main_header() -> None:
 
 
 def render_main_subtitle() -> None:
-    # Atualizado com estrutura Flexbox e pseudo-elementos para criar as linhas laterais integradas e elegantes
     st.markdown(
         """
         <div style="display: flex; align-items: center; text-align: center; margin-bottom: 25px;">
@@ -336,7 +341,7 @@ def render_admin_tab_edit(db: Any, songs: List[Dict[str, Any]], title_options: L
                     "drive_folder_link": edit_folder.strip()
                 }
                 db.update_song(song_edit["title"], updated_payload)
-                st.success("Música updated com sucesso!")
+                st.success("Música atualizada com sucesso!")
                 st.rerun()
             else:
                 st.error("Título e Compositor não podem ficar vazios.")

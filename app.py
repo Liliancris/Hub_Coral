@@ -4,8 +4,7 @@ from src.database import RepertoireDB
 from src.ui import (
     DEFAULT_MAESTRO_LINK,
     DEFAULT_PARTITURAS_LINK,
-    SELECT_SONG_HELP_MESSAGE,
-    SELECT_REPERTOIRE_HELP_MESSAGE,  # Adicionado conforme solicitado
+    SELECT_REPERTOIRE_HELP_MESSAGE,  # Mantida a mensagem que fica após a caixa
     TITLE_PLACEHOLDER,
     build_title_list,
     find_song_by_slug,
@@ -78,10 +77,7 @@ def render_song_selection(
     if st.session_state["show_next_event"]:
         render_next_event_area(next_event_text, is_admin, db)
 
-    # Texto de ajuda original posicionado ANTES da barra seletora
-    selected_song = get_selected_song(songs, st.session_state["selected_title"])
-    if not selected_song:
-        st.info(SELECT_SONG_HELP_MESSAGE)
+    # A caixa SELECT_SONG_HELP_MESSAGE que ficava aqui foi removida conforme solicitado
 
     # Barra seletora de músicas (Dropdown)
     st.selectbox(
@@ -91,7 +87,7 @@ def render_song_selection(
         key="selected_title",
     )
 
-    # Novo bloco de ajuda posicionado APÓS a barra seletora
+    # Bloco de ajuda posicionado APÓS a barra seletora (mantido ativo)
     selected_song = get_selected_song(songs, st.session_state["selected_title"])
     if not selected_song:
         st.info(SELECT_REPERTOIRE_HELP_MESSAGE)
