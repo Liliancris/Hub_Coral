@@ -5,8 +5,11 @@ from PIL import Image
 TITLE_PLACEHOLDER = "✨ Repertório Atual - Selecione uma música"
 BUTTON_LINK_TEMPLATE = "<div style='text-align:center'><a href=\"{url}\" target=\"_blank\" class=\"outline-btn\">{label}</a></div>"
 SELECT_SONG_HELP_MESSAGE = (
-    "🎵 Toque na caixa acima para ver partitura e audios da música selecionada. "
+    "🎵 Toque na caixa abaixo para ver partitura e audios da música selecionada. "
     "Ou acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro."
+)
+SELECT_REPERTOIRE_HELP_MESSAGE = (
+    "🎵 Acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro."
 )
 VOICE_OPTIONS = ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"]
 DEFAULT_PARTITURAS_LINK = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7"
@@ -47,15 +50,27 @@ PAGE_CSS = """
     /* Customização dos seletores nativos do Streamlit (Dropdown/Listbox) */
     div[data-baseweb="select"] > div {
         background-color: #F5EBE6 !important;
-        border: 1px solid #2E5A44 !important;
+        border: 1px solid #4A5D4E !important;
         border-radius: 12px !important;
     }
     div[data-baseweb="select"] * {
         color: #2D2D2D !important;
         font-weight: 500 !important;
     }
+    
+    /* Ajuste fino na margem superior da caixa de seleção */
+    div[data-testid="stSelectbox"] {
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
 
-    /* Botões de ação principais em blocos preenchidos (Verde-Salvia) */
+    /* EQUALIZAÇÃO DE ESPAÇOS: Controla estritamente as margens dos blocos de texto st.info */
+    div[data-testid="stNotification"] {
+        margin-top: 12px !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* Botões de ação principais em blocos preenchidos */
     .action-buttons { display:flex; gap:12px; justify-content:center; margin-bottom:12px; flex-wrap:wrap; }
     .outline-btn {
         border: none !important;
@@ -63,7 +78,7 @@ PAGE_CSS = """
         padding: 8px 12px !important;
         text-decoration: none !important;
         color: #FFFFFF !important;
-        background-color: #8F9779 !important;
+        background-color: #4A5D4E !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -74,11 +89,11 @@ PAGE_CSS = """
         font-size: 16px !important;
         box-shadow: 0px 2px 4px rgba(0,0,0,0.05) !important;
         
-        /* SOLUÇÃO PARA O CELULAR: Garante espaço mínimo vertical quando empilhado */
+        /* GARANTE RESPIRO NO TELEMÓVEL: Espaço mínimo vertical ao empilhar */
         margin-bottom: 12px !important; 
     }
     .outline-btn:hover { 
-        background-color: #7F8565 !important; 
+        background-color: #3D4A3E !important;
         color: #FFFFFF !important; 
         text-decoration: none !important; 
     }
@@ -89,30 +104,35 @@ PAGE_CSS = """
         height: 55px !important;
         font-size: 16px !important;
         margin-bottom: 12px !important;
+        background-color: #E0E0E0 !important;
+        color: #A0A0A0 !important;
     }
     
     /* Customização dos blocos de Código/Texto (Anotações do Maestro) para Card Pêssego */
     div[data-testid="stCodeBlock"] {
-        background-color: #F7ECE1 !important; /* Tom pêssego/terracota suave */
+        background-color: #F7ECE1 !important;
         border-radius: 12px !important;
         border: 1px solid rgba(163, 112, 76, 0.2) !important;
         padding: 14px !important;
+        margin-bottom: 15px !important;
     }
     /* Força o texto interno das anotações e tokens de texto a ficarem em cinza-grafite */
     div[data-testid="stCodeBlock"] code, 
     div[data-testid="stCodeBlock"] span {
         color: #2D2D2D !important;
-        font-family: inherit !important; /* Remove fonte monoespaçada de código */
-        font-size: 17px !important; /* Letras ampliadas e confortáveis para leitura */
+        font-family: inherit !important;
+        font-size: 17px !important;
         font-weight: 500 !important;
     }
+    
+    /* Estilização aplicada também aos botões nativos padrão do Streamlit (Ex: "Próximo evento") */
     .stButton>button,
     .stButton>div>button {
         border-radius: 12px !important;
         height: 55px !important;
         font-size: 16px !important;
         font-weight: 600 !important;
-        background-color: #8F9779 !important;
+        background-color: #4A5D4E !important;
         color: #FFFFFF !important;
         border: none !important;
         padding: 8px 12px !important;
@@ -120,8 +140,7 @@ PAGE_CSS = """
     }
     .stButton>button:hover,
     .stButton>div>button:hover {
-        background-color: #7F8565 !important;
-        color: #FFFFFF !important;
+        background-color: #3D4A3E !important;
     }
     </style>
 """
@@ -171,10 +190,13 @@ def render_main_header() -> None:
 
 
 def render_main_subtitle() -> None:
+    # Atualizado com estrutura Flexbox e pseudo-elementos para criar as linhas laterais integradas e elegantes
     st.markdown(
         """
-        <div style="text-align: center; margin-bottom: 25px;">
-            <p style="margin: 5px 0px 0px 0px; font-size: 20px; color: #2D2D2D; opacity: 0.8; ">Preparação para o ensaio</p>
+        <div style="display: flex; align-items: center; text-align: center; margin-bottom: 25px;">
+            <div style="flex: 1; border-bottom: 1px solid #4A5D4E; opacity: 0.3; margin-right: 15px;"></div>
+            <p style="margin: 0px; font-size: 20px; color: #2D2D2D; opacity: 0.8; white-space: nowrap;">Preparação para o ensaio</p>
+            <div style="flex: 1; border-bottom: 1px solid #4A5D4E; opacity: 0.3; margin-left: 15px;"></div>
         </div>
         """,
         unsafe_allow_html=True
@@ -206,7 +228,6 @@ def render_main_action_buttons(
 
 
 def render_song_details(song: Dict[str, Any]) -> None:
-    
     st.subheader(f"{song['title']}")
 
     if song.get("document_link"):
@@ -217,12 +238,11 @@ def render_song_details(song: Dict[str, Any]) -> None:
 
     st.markdown("#### 🎶 Anotações do maestro")
     
-    # O bloco st.code renderizará o card em tom pêssego/creme com letras legíveis automatizado pelo CSS injetado
     st.code(song["lyrics"], language="text", wrap_lines=True)
 
     if song.get("drive_folder_link"):
         st.markdown(
-            f'<a href="{song["drive_folder_link"]}" target="_blank" class="outline-btn">📂 Mostrar partituras e áudio desta música</a>',
+            f'<a href="{song["drive_folder_link"]}" target="_blank" class="outline-btn">📂 Mostrar partituras e áudio da música</a>',
             unsafe_allow_html=True
         )
     else:
@@ -230,7 +250,6 @@ def render_song_details(song: Dict[str, Any]) -> None:
 
 
 def render_empty_state(is_admin: bool) -> None:
-    # Aviso customizado no tom acolhedor da interface usando a estrutura nativa estilizada
     st.markdown(
         """
         <div style="background-color: #F7ECE1; padding: 20px; border-radius: 12px; border: 1px solid rgba(163, 112, 76, 0.2); color: #2D2D2D; margin-bottom: 15px;">
@@ -250,7 +269,7 @@ def render_editor_next_event(next_event_text: str, db: Any) -> None:
         if st.form_submit_button("Gravar próximo evento"):
             db.save_next_event(edited_text or "")
             st.success("Texto do próximo evento gravado com sucesso.")
-            st.experimental_rerun()
+            st.rerun()
 
 
 def render_viewer_next_event(next_event_text: str) -> None:
@@ -318,7 +337,7 @@ def render_admin_tab_edit(db: Any, songs: List[Dict[str, Any]], title_options: L
                     "drive_folder_link": edit_folder.strip()
                 }
                 db.update_song(song_edit["title"], updated_payload)
-                st.success("Música atualizada com sucesso!")
+                st.success("Música updated com sucesso!")
                 st.rerun()
             else:
                 st.error("Título e Compositor não podem ficar vazios.")

@@ -5,6 +5,7 @@ from src.ui import (
     DEFAULT_MAESTRO_LINK,
     DEFAULT_PARTITURAS_LINK,
     SELECT_SONG_HELP_MESSAGE,
+    SELECT_REPERTOIRE_HELP_MESSAGE,  # Adicionado conforme solicitado
     TITLE_PLACEHOLDER,
     build_title_list,
     find_song_by_slug,
@@ -18,7 +19,6 @@ from src.ui import (
     render_song_details,
     set_page_config_and_styles,
 )
-
 
 
 def initialize_session_state() -> None:
@@ -78,6 +78,12 @@ def render_song_selection(
     if st.session_state["show_next_event"]:
         render_next_event_area(next_event_text, is_admin, db)
 
+    # Texto de ajuda original posicionado ANTES da barra seletora
+    selected_song = get_selected_song(songs, st.session_state["selected_title"])
+    if not selected_song:
+        st.info(SELECT_SONG_HELP_MESSAGE)
+
+    # Barra seletora de músicas (Dropdown)
     st.selectbox(
         "",
         options=title_list,
@@ -85,13 +91,15 @@ def render_song_selection(
         key="selected_title",
     )
 
+    # Novo bloco de ajuda posicionado APÓS a barra seletora
     selected_song = get_selected_song(songs, st.session_state["selected_title"])
+    if not selected_song:
+        st.info(SELECT_REPERTOIRE_HELP_MESSAGE)
+
     partituras_link = get_display_link(selected_song)
 
     if selected_song:
         render_song_details(selected_song)
-    else:
-        st.info(SELECT_SONG_HELP_MESSAGE)
 
     render_main_action_buttons(
         partituras_url=partituras_link,
@@ -136,4 +144,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
