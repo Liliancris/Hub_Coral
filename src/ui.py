@@ -167,7 +167,7 @@ def render_top_action_buttons(
 
 
 def render_maestro_notes_modal(songs: List[Dict[str, Any]]) -> None:
-    with st.expander("📝 Anotações do maestro", expanded=True):
+    with st.expander("✒️ Anotações do maestro", expanded=True):
         st.write("Anotações do maestro de todo o repertório do ensaio.")
         if not songs:
             st.info("Nenhuma música cadastrada ainda.")
@@ -185,7 +185,7 @@ def render_maestro_notes_modal(songs: List[Dict[str, Any]]) -> None:
 
 def render_song_details(song: Dict[str, Any]) -> None:
     st.markdown("---")
-    st.subheader(f" {song['title']}")
+    st.subheader(f"🎶 {song['title']}")
 
     if song.get("document_link"):
         st.markdown(
@@ -202,7 +202,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
         st.button("❌ Arquivos não vinculados no Drive", disabled=True, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("📝 Anotações do maestro")
+    st.subheader("✒️ Anotações do maestro")
     
     # O bloco st.code renderizará o card em tom pêssego/creme com letras legíveis automatizado pelo CSS injetado
     st.code(song["lyrics"], language="text", wrap_lines=True)
