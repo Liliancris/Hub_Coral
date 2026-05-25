@@ -5,11 +5,10 @@ from PIL import Image
 TITLE_PLACEHOLDER = "✨ Repertório Atual - Selecione uma música"
 BUTTON_LINK_TEMPLATE = "<div style='text-align:center'><a href=\"{url}\" target=\"_blank\" class=\"outline-btn\">{label}</a></div>"
 SELECT_SONG_HELP_MESSAGE = (
-    "🎵 Toque na caixa abaixo para ver partitura e audios da música selecionada. "
-    "Ou acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro."
+    "🎵 Toque na caixa abaixo para ver partitura e audios da música selecionada bem como as anotações do Maestro. "
 )
 SELECT_REPERTOIRE_HELP_MESSAGE = (
-    "🎵 Acione os botões abaixo para acessar o repertório completo bem como as orientações do maestro."
+    "🎵 Acione os botões abaixo para acessar o repertório completo."
 )
 VOICE_OPTIONS = ["SATB (Geral)", "Soprano", "Contralto", "Tenor", "Baixo", "Uníssono"]
 DEFAULT_PARTITURAS_LINK = "https://drive.google.com/drive/folders/1XZHr5fjzXGacJRyllwe5FypcyKSfj7y7"
