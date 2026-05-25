@@ -109,7 +109,7 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Música para o próximo ensaio"]
+    titles = ["✨ Músicas para o próximo ensaio"]
     titles.extend(s["title"] for s in songs)
     return titles
 
