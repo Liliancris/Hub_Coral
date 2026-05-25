@@ -222,7 +222,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
 
     if song.get("drive_folder_link"):
         st.markdown(
-            f'<a href="{song["drive_folder_link"]}" target="_blank" class="outline-btn">📂 Mostrar partituras e áudio da música</a>',
+            f'<a href="{song["drive_folder_link"]}" target="_blank" class="outline-btn">📂 Mostrar partituras e áudio desta música</a>',
             unsafe_allow_html=True
         )
     else:
