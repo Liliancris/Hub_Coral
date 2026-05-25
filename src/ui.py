@@ -63,6 +63,9 @@ PAGE_CSS = """
         height: 55px !important;
         font-size: 16px !important;
         box-shadow: 0px 2px 4px rgba(0,0,0,0.05) !important;
+        
+        /* SOLUÇÃO PARA O CELULAR: Garante espaço mínimo vertical quando empilhado */
+        margin-bottom: 12px !important; 
     }
     .outline-btn:hover { 
         background-color: #234534 !important; 
@@ -75,11 +78,10 @@ PAGE_CSS = """
         border-radius: 12px !important;
         height: 55px !important;
         font-size: 16px !important;
+        margin-bottom: 12px !important;
     }
     
-    /* =========================================================================
-       ALTERAÇÃO PEDIDA: Card de Mensagem na Base (Caixa de Anotações do Maestro)
-       ========================================================================= */
+    /* Customização dos blocos de Código/Texto (Anotações do Maestro) para Card Pêssego */
     div[data-testid="stCodeBlock"] {
         background-color: #F7ECE1 !important; /* Tom pêssego/terracota suave */
         border-radius: 12px !important;
@@ -107,7 +109,7 @@ def set_page_config_and_styles() -> None:
 
 
 def build_title_list(songs: List[Dict[str, Any]]) -> List[str]:
-    titles = ["✨ Clique - Músicas do próximo ensaio"]
+    titles = ["✨ Música para o próximo ensaio"]
     titles.extend(s["title"] for s in songs)
     return titles
 
@@ -187,7 +189,7 @@ def render_song_details(song: Dict[str, Any]) -> None:
 
     if song.get("document_link"):
         st.markdown(
-            f'<a href="{song["document_link"]}" target="_blank" class="outline-btn" style="margin-bottom: 12px;">📄 ACESSAR DOCUMENTO</a>',
+            f'<a href="{song["document_link"]}" target="_blank" class="outline-btn">📄 ACESSAR DOCUMENTO</a>',
             unsafe_allow_html=True
         )
 
@@ -210,7 +212,7 @@ def render_empty_state(is_admin: bool) -> None:
     # Aviso customizado no tom acolhedor da interface usando a estrutura nativa estilizada
     st.markdown(
         """
-        <div style="background-color: #F7ECE1; padding: 20px; border-radius: 12px; border: 1px solid rgba(163, 112, 76, 0.2); color: #2D2D2D;">
+        <div style="background-color: #F7ECE1; padding: 20px; border-radius: 12px; border: 1px solid rgba(163, 112, 76, 0.2); color: #2D2D2D; margin-bottom: 15px;">
             <span style="font-size: 20px;">🎵</span> <b>Aguardando sua seleção!</b><br>
             Toque na caixa acima para abrir a lista de músicas do ensaio.
         </div>
