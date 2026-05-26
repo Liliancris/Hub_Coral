@@ -11,9 +11,9 @@ from src.ui import (
     render_admin_panel,
     render_empty_state,
     render_main_header,
+    render_next_event_area,
     render_main_subtitle,
     render_main_action_buttons,
-    render_next_event_area,
     render_next_event_button,
     render_song_details,
     set_page_config_and_styles,
@@ -69,15 +69,16 @@ def render_song_selection(
     is_admin: bool,
     db: RepertoireDB,
 ) -> None:
+    # 1. O botão que controla a abertura do evento continua aqui
     if render_next_event_button():
         st.session_state["show_next_event"] = not st.session_state["show_next_event"]
 
-    render_main_subtitle()
-
+    # 2. MUDANÇA CRUCIAL: O acordeon do Próximo evento agora renderiza ANTES do subtítulo
     if st.session_state["show_next_event"]:
         render_next_event_area(next_event_text, is_admin, db)
 
-    # A caixa SELECT_SONG_HELP_MESSAGE que ficava aqui foi removida conforme solicitado
+    # 3. O subtítulo "Preparação para o ensaio" foi movido para baixo do acordeon
+    render_main_subtitle()
 
     # Barra seletora de músicas (Dropdown)
     st.selectbox(

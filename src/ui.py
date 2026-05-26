@@ -27,6 +27,12 @@ PAGE_CSS = """
         background-color: #FDFBF7 !important;
     }
     
+    /* Remove a margem interna superior padrão do container do Streamlit */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
     /* Esconde o botão de Deploy e o menu do GitHub no topo direito */
     .stAppDeployButton {
         display: none !important;
@@ -42,7 +48,7 @@ PAGE_CSS = """
     footer {
         visibility: hidden !important;
     }
-    /* Ajusta o espaçamento do topo que ficou vazio */
+    /* Esconde a barra estrutural vazia do topo */
     .stAppHeader {
         display: none !important;
     }
@@ -184,10 +190,10 @@ def render_main_header() -> None:
     except FileNotFoundError:
         pass
 
-    # Espaço diminuído aqui usando margin-top negativo no div para o título subir mais na tela
+    # Aplicado margem negativa de -35px para aproximar o título do topo o máximo possível
     st.markdown(
         """
-        <div style="text-align: center; margin-top: -20px; margin-bottom: 25px;">
+        <div style="text-align: center; margin-top: -35px; margin-bottom: 20px;">
             <h1 style="margin: 0px; font-weight: 700; color: #2D2D2D; font-family: 'Playfair Display', Georgia, serif;">Coral Ases</h1>
         </div>
         """,
@@ -342,7 +348,7 @@ def render_admin_tab_edit(db: Any, songs: List[Dict[str, Any]], title_options: L
                     "drive_folder_link": edit_folder.strip()
                 }
                 db.update_song(song_edit["title"], updated_payload)
-                st.success("Música atualizada com sucesso!")
+                st.success("Música updated com sucesso!")
                 st.rerun()
             else:
                 st.error("Título e Compositor não podem ficar vazios.")
@@ -367,7 +373,7 @@ def render_admin_tab_next_events(db: Any) -> None:
         prox_text = st.text_area("Quadro de próximos eventos", value=current_next_event, height=200)
         if st.form_submit_button("Atualizar quadro de próximos eventos"):
             db.save_next_event(prox_text or "")
-            st.success("Quadro de próximos eventos updated com sucesso.")
+            st.success("Quadro de próximos eventos atualizado com sucesso.")
             st.rerun()
 
 
