@@ -291,7 +291,12 @@ def render_viewer_next_event(next_event_text: str) -> None:
 
 
 def render_next_event_area(next_event_text: str, is_admin: bool, db: Any) -> None:
-    with st.expander("📌 Próximo evento", expanded=True):
+    # Identifica o título do evento: pega a primeira linha preenchida ou usa o padrão
+    lines = [line.strip() for line in next_event_text.split("\n") if line.strip()]
+    event_title = f"📌 {lines[0]}" if lines else "📌 Próximo evento"
+
+    # Define o título extraído dinamicamente no expander
+    with st.expander(event_title, expanded=True):
         if is_admin:
             render_editor_next_event(next_event_text, db)
         else:
