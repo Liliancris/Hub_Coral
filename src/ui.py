@@ -184,9 +184,10 @@ def render_main_header() -> None:
     except FileNotFoundError:
         pass
 
+    # Espaço diminuído aqui usando margin-top negativo no div para o título subir mais na tela
     st.markdown(
         """
-        <div style="text-align: center; margin-top: 10px; margin-bottom: 25px;">
+        <div style="text-align: center; margin-top: -20px; margin-bottom: 25px;">
             <h1 style="margin: 0px; font-weight: 700; color: #2D2D2D; font-family: 'Playfair Display', Georgia, serif;">Coral Ases</h1>
         </div>
         """,
@@ -366,7 +367,7 @@ def render_admin_tab_next_events(db: Any) -> None:
         prox_text = st.text_area("Quadro de próximos eventos", value=current_next_event, height=200)
         if st.form_submit_button("Atualizar quadro de próximos eventos"):
             db.save_next_event(prox_text or "")
-            st.success("Quadro de próximos eventos atualizado com sucesso.")
+            st.success("Quadro de próximos eventos updated com sucesso.")
             st.rerun()
 
 
